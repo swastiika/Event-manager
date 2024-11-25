@@ -1,13 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+{% extends 'app/layout.html' %}
+{% load static %}
+{% block title %}Invitation Page{% endblock %}
 
-<body>
-    <h1>HIEEEEE</h1>
-    
-</body>
-</html>
+{% block body %}
+<div class="container">
+    <!-- Event Details Section -->
+    <h1>Event Created Successfully!</h1>
+    <div class="event-details">
+        <h2>{{event.name}}</h2>
+        <p><strong>Date:</strong> {{event.date}}<p>
+        <p><strong>Location:</strong> {{event.venue}}</p>
+        <p><strong>Description:</strong> {{event.description}}</p>
+    </div>
+
+    <!-- Invitation Form -->
+    <div class="invitation-form">
+        <h3>Send Invitations</h3>
+        <form method="post" action="{% url 'send_invitations' 2 %}">
+            {% csrf_token %}
+            <label for="email">Invite Users by Email (comma-separated):</label><br>
+            <textarea id="email" name="email" rows="3" class="form-control" placeholder="Enter email addresses"></textarea><br>
+            <button type="submit" class="btn btn-primary">Send Invitations</button>
+        </form>
+    </div>
+
+    <!-- RSVP Tracking -->
+    <div class="rsvp-tracking mt-4">
+        <h3>RSVPs</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invitee in invitees %}
+                <tr>
+                    <td>{{ invitee.email }}</td>
+                    <td>{{ invitee.rsvp_status }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">No invites sent yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="events-container"></div>
+{% endblock %}
+
+{% block script %}
+<script type="module" src="{% static 'app/script.js' %}"></script>
+<script type="module" src="{% static 'app/new_event.js' %}"></script>
+
+{% endblock %}

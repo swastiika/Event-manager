@@ -1,5 +1,5 @@
 {% extends "app/layout.html" %}
-
+{% load static %}
 {% block body %}
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
@@ -27,4 +27,8 @@
         </p>
     </div>
 </div>
+{% endblock %}
+{% block script %}
+<script type="module" src="{% static 'app/script.js' %}"></script>
+<script type="module" src="{% static 'app/new_event.js' %}"></script>
 {% endblock %}

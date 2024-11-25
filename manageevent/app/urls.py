@@ -8,6 +8,7 @@ urlpatterns = [
     path("create_event",views.create_event,name="create_event"),
     path("show_event",views.show_event,name="show_event"),
     path("show_profile",views.show_profile,name="show_profile"),
-    path('send-invitation/<int:event_id>',views.events,name="events"),
+    path('send-invitation/<int:event_id>',views.events,name="send_invitations"),
+    # path('send_invitations/<int:event_id>',views.send_invitations,name="send_invitations")
      
 ]

@@ -11,10 +11,11 @@ import json
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 
 
-from .models import User,Event
-from .serializers import EventSerializer
+from .models import User,Event,Invitee
+from .serializers import EventSerializer,InviteSerializer
 
 # Create your views here.
 def index(request):
@@ -104,7 +105,7 @@ def create_event(request):
     return Response(serializer.errors, status=400)
 
 @api_view(['GET'])
-def show_event(request):
+def show_event(request,):
     events = Event.objects.filter(type='public')
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data)
@@ -115,5 +116,19 @@ def show_profile(request):
     serializer = EventSerializer(events,many=True)
     return Response(serializer.data)
 
-def events(request,event_id):
-    return render(request,"app/rsvp.html")
+@api_view(['GET', 'POST'])  # Pass both methods in a single list
+def events(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if request.method == "GET":
+        # Fetch all invitees related to the event
+        invitees = Invitee.objects.filter(event=event)  # Corrected query
+        return render(request, "app/rsvp.html", {"event": event, "invitees": invitees})
+
+    elif request.method == 'POST':
+        # Deserialize and validate data
+        serializer = InviteSerializer(data=request.data, many=True)  # Assuming bulk creation
+        if serializer.is_valid():
+            serializer.save(event=event)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

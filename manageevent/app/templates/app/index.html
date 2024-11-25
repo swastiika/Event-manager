@@ -56,15 +56,20 @@
                 <label for="description" class="form-label">Event Description</label>
                 <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter a brief description"></textarea>
             </div>
-            <button class="btn btn-success w-100" type="submit">Submit Event</button>
+            <button class="btn btn-success w-100" type="submit" >Submit Event</button>
         </form>
         
     </div>
     {% endif %}
+    <div id="events-container"></div>
+
 </div>
 
 {% endblock %}
 {% block script %}
-<script src="{% static 'app/script.js' %}"></script> 
+<script type="module" src="{% static 'app/script.js' %}"></script>
+<script type="module" src="{% static 'app/new_event.js' %}"></script>
+
+
 
 {% endblock %}

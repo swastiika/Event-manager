@@ -88,8 +88,32 @@ def logout_view(request):
 
 @api_view(['POST'])
 def create_event(request):
-    serializer = EventSerializer(data=request.data)
+    # Ensure the user is authenticated
+    if not request.user.is_authenticated:
+        return Response({'error': 'Authentication required'}, status=401)
+
+    # Add the owner (request.user) to the serializer's data
+    data = request.data.copy()  # Make a copy of request.data to add the owner
+    data['owner'] = request.user.id  # Assign the authenticated user's ID as owner
+
+    serializer = EventSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
-        return JsonResponse({'message': 'Event created successfully!'}, status=201)
+        event = serializer.save()  # Save the event
+        # Re-serialize the saved event and return it
+        return Response(EventSerializer(event).data, status=201)
     return Response(serializer.errors, status=400)
+
+@api_view(['GET'])
+def show_event(request):
+    events = Event.objects.filter(type='public')
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def show_profile(request):
+    events = Event.objects.filter(owner = request.user)
+    serializer = EventSerializer(events,many=True)
+    return Response(serializer.data)
+
+def events(request,event_id):
+    return render(request,"app/rsvp.html")

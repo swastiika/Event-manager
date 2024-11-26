@@ -1,4 +1,4 @@
-import { showEvent,showProfile  } from "./function.js";
+import { showEvent,showProfile,send_invitation } from "./function.js";
 import { create_event } from "./new_event.js";
 document.addEventListener('DOMContentLoaded', () => {
     const publicEvent = document.getElementById("public-events");
@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const venueField = document.getElementById('venue-field');
     const linkField = document.getElementById('link-field');
     const eventForm = document.getElementById("event-form");
+    const invitation_form = document.getElementById("send_invitation");
+
+
   
     // Check for the public event and profile button clicks
     if(publicEvent) {
@@ -18,6 +21,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if(profileView) {
         profileView.addEventListener('click', showProfile); // Attach event listener for profile
     }
+    if(invitation_form){
+
+
+        invitation_form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const emailInput = document.querySelector('#email').value;
+            const emails = emailInput.split(",").map(email => email.trim());
+            const eventId = 30;
+            const rsvpStatus = "Pending";
+        
+            // Map over emails to construct the data array
+            const data = emails.map(email => ({
+                event: eventId,
+                email: email,
+                rsvp_status: rsvpStatus
+            }));
+        
+            // Send the POST request with the constructed data
+            fetch('http://127.0.0.1:8000/send-invitation/30', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    invitation_form.reset();
+                    console.log("Everything okay:", data);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        });
+        
+}
 
     // Home button redirect
     document.querySelector('#home').addEventListener('click', function (event) {

@@ -8,8 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'first_name', 'last_name', 'email']  # Include the fields you want
 
 class EventSerializer(serializers.ModelSerializer):
-    owner = UserSerializer()  # Use the UserSerializer for the owner field
-
+    owner = UserSerializer(read_only=True)  # Use UserSerializer for detailed info
     class Meta:
         model = Event
         fields = '__all__' 

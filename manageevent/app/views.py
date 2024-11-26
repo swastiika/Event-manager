@@ -15,7 +15,7 @@ from rest_framework import status
 
 
 from .models import User,Event,Invitee
-from .serializers import EventSerializer,InviteSerializer
+from .serializers import EventSerializer,InviteSerializer,UserSerializer
 
 # Create your views here.
 def index(request):
@@ -95,11 +95,10 @@ def create_event(request):
 
     # Add the owner (request.user) to the serializer's data
     data = request.data.copy()  # Make a copy of request.data to add the owner
-    data['owner'] = request.user.id  # Assign the authenticated user's ID as owner
 
     serializer = EventSerializer(data=data)
     if serializer.is_valid():
-        event = serializer.save()  # Save the event
+        event = serializer.save(owner = request.user)  # Save the event
         # Re-serialize the saved event and return it
         return Response(EventSerializer(event).data, status=201)
     return Response(serializer.errors, status=400)
@@ -132,3 +131,5 @@ def events(request, event_id):
             serializer.save(event=event)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    

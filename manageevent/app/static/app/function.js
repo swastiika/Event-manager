@@ -74,3 +74,8 @@ export function showProfile(event) {
         });
     
 }
+
+export function send_invitation(eventId){
+    console.log(eventId);
+
+}

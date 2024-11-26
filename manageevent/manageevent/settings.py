@@ -82,6 +82,11 @@ DATABASES = {
 }
 AUTH_USER_MODEL = 'app.User'
 
+INSTALLED_APPS += ['corsheaders']
+MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware'] + MIDDLEWARE
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+]
 
 
 # Password validation

@@ -16,11 +16,17 @@ export function renderEvents(events) {
       const eventElement = document.createElement('div');
       eventElement.classList.add('event');
       eventElement.innerHTML = `
-        <h3>${event.name}</h3>
-        <p>Type: ${event.type}</p>
-        <p>Date: ${event.date}</p>
-        <p>Description: ${event.description}</p>
-        <p>Creater: ${event.owner.username}</p>
+   <div class="card my-3">
+    <div class="card-body">
+        <h3 class="card-title">${event.name}</h3>
+        <p class="card-text"><strong>Type:</strong> ${event.type}</p>
+        <p class="card-text"><strong>Date:</strong> ${event.date}</p>
+        <p class="card-text"><strong>Description:</strong> ${event.description}</p>
+        <p class="card-text"><strong>Creator:</strong> ${event.owner.username}</p>
+        <button type="button" class="btn btn-success">View Invitation Status</button>
+    </div>
+   </div>
+
       `;
       container.appendChild(eventElement);
     });

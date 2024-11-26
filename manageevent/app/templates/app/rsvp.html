@@ -7,10 +7,10 @@
     <!-- Event Details Section -->
     <h1>Event Created Successfully!</h1>
     <div class="event-details">
-        <h2>{{event.name}}</h2>
-        <p><strong>Date:</strong> {{event.date}}<p>
-        <p><strong>Location:</strong> {{event.venue}}</p>
-        <p><strong>Description:</strong> {{event.description}}</p>
+        <h2>{{ event.name }}</h2>
+        <p><strong>Date:</strong> {{ event.date }}</p> <!-- Fixed unclosed <p> tag -->
+        <p><strong>Location:</strong> {{ event.venue }}</p>
+        <p><strong>Description:</strong> {{ event.description }}</p>
     </div>
 
     <!-- Invitation Form -->
@@ -58,5 +58,4 @@
 {% block script %}
 <script type="module" src="{% static 'app/script.js' %}"></script>
 <script type="module" src="{% static 'app/new_event.js' %}"></script>
-
 {% endblock %}

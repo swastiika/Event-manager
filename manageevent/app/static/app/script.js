@@ -2,6 +2,7 @@ import { showEvent, showProfile, send_invitation } from "./function.js";
 import { create_event } from "./new_event.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+    const blockView = document.getElementById('block-container');
     const publicEvent = document.getElementById("public-events");
     const profileView = document.getElementById("profile");
     const createEventBtn = document.getElementById("create-event-btn");
@@ -12,19 +13,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const eventForm = document.getElementById("event-form");
     const invitationForm = document.getElementById("send_invitation");
     const homeButton = document.querySelector("#home");
-
     // Event Listeners
     if (publicEvent) {
-        publicEvent.addEventListener("click", showEvent);
+        publicEvent.addEventListener("click", ()=>{
+            showEvent();
+        })
     }
 
     if (profileView) {
-        profileView.addEventListener("click", showProfile);
+        profileView.addEventListener("click",()=>{
+            showProfile();
+            blockView.style.display = 'none';
+        });
     }
 
     if (invitationForm) {
-        console.log("Invitation form detected.");
-
         invitationForm.addEventListener("submit", function (e) {
             e.preventDefault();
 

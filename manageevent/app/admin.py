@@ -3,4 +3,7 @@ from .models import Event,User,Invitee
 # Register your models here.
 admin.site.register(Event)
 admin.site.register(User)
-admin.site.register(Invitee)
+class InviteeAdmin(admin.ModelAdmin):
+    list_display = ('email', 'event', 'rsvp_status', 'invitation_sent_at')
+
+admin.site.register(Invitee, InviteeAdmin)

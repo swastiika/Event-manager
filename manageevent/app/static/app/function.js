@@ -23,7 +23,8 @@ export function renderEvents(events) {
         <p class="card-text"><strong>Date:</strong> ${event.date}</p>
         <p class="card-text"><strong>Description:</strong> ${event.description}</p>
         <p class="card-text"><strong>Creator:</strong> ${event.owner.username}</p>
-        <button type="button" class="btn btn-success">View Invitation Status</button>
+       <button type="button" class="btn btn-success" onclick="window.location.href='http://127.0.0.1:8000/send-invitation/3'">View Invitation Status</button>
+
     </div>
    </div>
 
@@ -32,27 +33,31 @@ export function renderEvents(events) {
     });
 }
 
+
 export function showEvent(event) {
-    event.preventDefault();
-    fetch('/show_event', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then((data) => {
-        console.log('Fetched data:', data);
-        renderEvents(data);
-    })
-    .catch((error) => {
-        console.error('There was a problem with the fetch operation:', error);
-    });
+    // If the event is triggered by a button click, prevent default behavior
+    if (event) event.preventDefault();
+        // Fetch profile data if on the home page
+        fetch('http://127.0.0.1:8000/show_event', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();  // Parse the JSON data from the response
+        })
+        .then(data => {
+            console.log('Fetched profile data:', data);
+            renderEvents(data);  // You can render profile or event details
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    
 }
 
 export function showProfile(event) {

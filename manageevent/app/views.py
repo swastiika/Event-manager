@@ -104,7 +104,7 @@ def create_event(request):
     return Response(serializer.errors, status=400)
 
 @api_view(['GET'])
-def show_event(request,):
+def show_event(request):
     events = Event.objects.filter(type='public')
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data)

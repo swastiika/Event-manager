@@ -20,7 +20,7 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="email">Invite Users by Email (comma-separated):</label>
-                <textarea id="email" name="email" rows="3" class="form-control" placeholder="Enter email addresses" required></textarea>
+                <textarea id="email" name="recipient" rows="3" class="form-control" placeholder="Enter email addresses" required></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Send Invitations</button>
         </form>
@@ -40,7 +40,7 @@
             <tbody>
                 {% for invitee in invitees %}
                 <tr>
-                    <td>{{ invitee.email }}</td>
+                    <td>{{ invitee.recipient }}</td>
                     <td>{{ invitee.rsvp_status }}</td>
                 </tr>
                 {% empty %}

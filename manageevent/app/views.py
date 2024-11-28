@@ -132,4 +132,12 @@ def events(request, event_id):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    
+
+def rsvp_Response(request,event_id):
+    return
+
+@api_view(['GET'])
+def showInvitations(request):
+    events = Invitee.objects.filter(recipient = "ss@gmail.com")
+    serializer = InviteSerializer(events,many = True)
+    return Response(serializer.data)

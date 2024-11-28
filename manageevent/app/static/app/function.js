@@ -86,7 +86,59 @@ export function showProfile(event) {
     
 }
 
+
+
+
+export function showInvitations(event) {
+    // If the event is triggered by a button click, prevent default behavior
+    if (event) event.preventDefault();
+        // Fetch profile data if on the home page
+        fetch('http://127.0.0.1:8000/showInvitations', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();  // Parse the JSON data from the response
+        })
+        .then(data => {
+            console.log('Fetched profile data:', data);
+            const container = document.getElementById('events-container');
+            container.innerHTML = '';
+            if(data.length===0)
+                {
+                     container.innerHTML = `<p>No Invitations Available`;
+                     return;
+                }
+            data.forEach((event) =>{
+                const eventElement = document.createElement('div');
+                eventElement.classList.add('invite-event');
+                eventElement.innerHTML = `
+                <div class="card m-3">
+                <div class="card-body">
+                <h3 class="card-title">${event.event.name}</h3>
+                <p class="card-text">Received at:${event.invitation_sent_at}</p>
+                <p class="card-text">Status:${event.rsvp_status}</p>
+                <p class="card-text">Owner:${event.event.owner.username}</p>
+                </div>
+                </div>
+                `;
+                container.appendChild(eventElement);
+            })
+
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    
+}
+
 export function send_invitation(eventId){
     console.log(eventId);
 
 }
+

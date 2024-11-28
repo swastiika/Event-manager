@@ -1,4 +1,4 @@
-import { showEvent, showProfile, send_invitation } from "./function.js";
+import { showEvent, showProfile, showInvitations} from "./function.js";
 import { create_event } from "./new_event.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const eventForm = document.getElementById("event-form");
     const invitationForm = document.getElementById("send_invitation");
     const homeButton = document.querySelector("#home");
+    const invitations = document.querySelector('#invitations');
+
     // Event Listeners
     if (publicEvent) {
         publicEvent.addEventListener("click", ()=>{
@@ -26,7 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
             blockView.style.display = 'none';
         });
     }
-
+    if (invitations){
+        invitations.addEventListener("click",function(){
+            showInvitations();
+        })
+    }
     if (invitationForm) {
         invitationForm.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -41,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = emails.map((email) => ({
                 event: eventId,
-                email: email,
+                recipient : email,
                 rsvp_status: rsvpStatus,
             }));
 

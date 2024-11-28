@@ -15,6 +15,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class InviteSerializer(serializers.ModelSerializer):
+    event = EventSerializer(read_only = True)
     class Meta:
         model = Invitee
         fields = '__all__'

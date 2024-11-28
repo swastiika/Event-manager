@@ -9,6 +9,8 @@ urlpatterns = [
     path("show_event",views.show_event,name="show_event"),
     path("show_profile",views.show_profile,name="show_profile"),
     path('send-invitation/<int:event_id>',views.events,name="send_invitations"),
+    path('rsvp_response/<int:event_id>',views.rsvp_Response,name="rsvp_response"),
+    path('showInvitations',views.showInvitations,name="showInvitations")
     # path('send_invitations/<int:event_id>',views.send_invitations,name="send_invitations")
      
 ]

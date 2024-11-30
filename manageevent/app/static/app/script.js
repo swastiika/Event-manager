@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const invitationForm = document.getElementById("send_invitation");
     const homeButton = document.querySelector("#home");
     const invitations = document.querySelector('#invitations');
+  
 
     // Event Listeners
     if (publicEvent) {
@@ -74,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         });
     }
-
+    
     // Home button redirect
     if (homeButton) {
         homeButton.addEventListener("click", function (event) {

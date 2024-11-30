@@ -17,6 +17,11 @@ class Event(models.Model):
     
     def __str__(self):
         return f"{self.name} ({self.date}) - {self.mode.capitalize()}"
+    
+class RSVPStatus(models.TextChoices):
+    PENDING = 'Pending', 'Pending'
+    ACCEPTED = 'Accepted', 'Accepted'
+    DECLINED = 'Declined', 'Declined'
 
 class Invitee(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="invitees")
@@ -24,12 +29,8 @@ class Invitee(models.Model):
     recipient = models.EmailField(default="default@example.com")  # Add parentheses here to instantiate the field
     rsvp_status = models.CharField(
         max_length=20,
-        choices=[
-            ('Pending', 'Pending'),
-            ('Accepted', 'Accepted'),
-            ('Declined', 'Declined')
-        ],
-        default='Pending'
+        choices=RSVPStatus.choices,
+        default=RSVPStatus.PENDING
     )
     invitation_sent_at = models.DateTimeField(auto_now_add=True)
     responded_at = models.DateTimeField(null=True, blank=True)

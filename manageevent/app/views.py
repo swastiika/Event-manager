@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
-
+from django.utils.timezone import now
 
 from .models import User,Event,Invitee
 from .serializers import EventSerializer,InviteSerializer,UserSerializer
@@ -35,7 +35,7 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "network/login.html", {
+            return render(request, "app/login.html", {
                 "message": "Invalid username and/or password."
             })
     else:
@@ -107,12 +107,16 @@ def create_event(request):
 def show_event(request):
     events = Event.objects.filter(type='public')
     serializer = EventSerializer(events, many=True)
+    for event_data, event in zip(serializer.data, events):
+        event_data['is_owner'] = event.owner == request.user  # Check if user is the owner
     return Response(serializer.data)
 
 @api_view(['GET'])
 def show_profile(request):
     events = Event.objects.filter(owner = request.user)
     serializer = EventSerializer(events,many=True)
+    for event_data, event in zip(serializer.data, events):
+        event_data['is_owner'] = True
     return Response(serializer.data)
 
 @api_view(['GET', 'POST'])  # Pass both methods in a single list
@@ -133,11 +137,38 @@ def events(request, event_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-def rsvp_Response(request,event_id):
-    return
-
 @api_view(['GET'])
 def showInvitations(request):
-    events = Invitee.objects.filter(recipient = "ss@gmail.com")
+    user_mail = request.user.email
+    events = Invitee.objects.filter(recipient = user_mail)
     serializer = InviteSerializer(events,many = True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def update_status(request, event_id):
+    """
+    Update RSVP status for a specific event invitation.
+    """
+    # Extract status from the request body
+    status = request.data.get('status')  # Use request.data for POST
+    if status not in ['Accepted', 'Declined']:
+        return JsonResponse({'error': 'Invalid status value.'}, status=400)
+
+    # Authenticate and fetch invitee
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'User not authenticated.'}, status=401)
+
+    # Fetch invitee for the event
+    invitee = get_object_or_404(Invitee, id=event_id, recipient=request.user.email)
+
+    # Update RSVP status
+    invitee.rsvp_status = status
+    invitee.responded_at = now()
+    invitee.save()
+    event = invitee.event
+    serializer = EventSerializer(event)
+
+    return Response({
+        'message': f'RSVP status updated to {status}.',
+        'event': serializer.data
+    }, status=200)

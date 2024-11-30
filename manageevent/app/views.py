@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+from datetime import datetime, timedelta
 from django.utils.timezone import now
 
 from .models import User,Event,Invitee
@@ -172,3 +173,30 @@ def update_status(request, event_id):
         'message': f'RSVP status updated to {status}.',
         'event': serializer.data
     }, status=200)
+
+# @api_view(['GET'])
+# def accepted_events(request):
+#     recipient_email = request.user.email  # Get the recipient email of the logged-in user
+
+#     # Get accepted events by filtering Invitee model based on RSVP status and recipient email
+#     accepted_invitees = Invitee.objects.filter(recipient="sandip@gmail.com", rsvp_status="Accepted")
+
+#     # Prepare the events data in FullCalendar's expected format
+#     event_list = []
+
+#     for invitee in accepted_invitees:
+#         event = invitee.event  # Access the associated event object
+        
+#         # Prepare the event data
+#         event_data = {
+#             'title': event.name,  # Event name
+#             'start': event.date.isoformat(),  # Event date in ISO format, assuming a single-day event
+#             'end': (event.date + timedelta(days=1)).isoformat(),  # Assuming events are 1 day long
+#             'description': event.description,  # Optional: Add event description
+#             'location': event.venue,  # Optional: Add venue (location of the event)
+#             'url': event.link,  # Optional: URL if the event is online or has additional info
+#         }
+
+#         event_list.append(event_data)
+
+#     return Response(event_list)

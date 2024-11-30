@@ -11,7 +11,7 @@
     <div class="text-center mb-4">
         <button id="create-event-btn" class="btn btn-primary">Create New Event</button>
     </div>
-
+    <div id="calendar"></div>
     <!-- Hidden Form -->
     <div id="create-event-form" class="card shadow p-4 mb-4" style="display: none; max-width: 500px; margin: 0 auto;" data-create-url="{% url 'create_event' %}">
         <h3 class="mb-3">Create a New Event</h3>
@@ -64,6 +64,7 @@
 
 {% endblock %}
 {% block script %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js"></script>
 <script type="module" src="{% static 'app/script.js' %}"></script>
 <script type="module" src="{% static 'app/function.js'%}"></script>
 <script type="module" src="{% static 'app/new_event.js' %}"></script>

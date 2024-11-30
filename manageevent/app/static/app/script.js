@@ -14,8 +14,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const invitationForm = document.getElementById("send_invitation");
     const homeButton = document.querySelector("#home");
     const invitations = document.querySelector('#invitations');
-  
-
+    const calendarEl = document.querySelector('#calendar');
+    if (calendarEl) {
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth', // Default view is month
+            locale: 'en', // Set locale (optional)
+            
+            // Fetch the events from your API endpoint
+            events: []//function(info, successCallback, failureCallback) {
+            //     fetch('/accepted_events')  // Adjust the URL to your API
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             successCallback(data);  // Pass the event data to FullCalendar
+            //         })
+            //         .catch(error => {
+            //             failureCallback(error);  // Handle errors if needed
+            //         });
+            // }
+        });
+    
+        calendar.render(); // Render the calendar
+    }
+    
     // Event Listeners
     if (publicEvent) {
         publicEvent.addEventListener("click", ()=>{

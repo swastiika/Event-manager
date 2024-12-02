@@ -174,29 +174,26 @@ def update_status(request, event_id):
         'event': serializer.data
     }, status=200)
 
-# @api_view(['GET'])
-# def accepted_events(request):
-#     recipient_email = request.user.email  # Get the recipient email of the logged-in user
+@api_view(['GET'])
+def accepted_events(request):
+    recipient_email = request.user.email  # Get the recipient email of the logged-in user
 
-#     # Get accepted events by filtering Invitee model based on RSVP status and recipient email
-#     accepted_invitees = Invitee.objects.filter(recipient="sandip@gmail.com", rsvp_status="Accepted")
+    # Get accepted events by filtering Invitee model based on RSVP status and recipient email
+    accepted_invitees = Invitee.objects.filter(recipient=recipient_email, rsvp_status="Accepted")
 
-#     # Prepare the events data in FullCalendar's expected format
-#     event_list = []
+    # Prepare the events data in FullCalendar's expected format
+    event_list = []
 
-#     for invitee in accepted_invitees:
-#         event = invitee.event  # Access the associated event object
+    for invitee in accepted_invitees:
+        event = invitee.event  # Access the associated event object
         
-#         # Prepare the event data
-#         event_data = {
-#             'title': event.name,  # Event name
-#             'start': event.date.isoformat(),  # Event date in ISO format, assuming a single-day event
-#             'end': (event.date + timedelta(days=1)).isoformat(),  # Assuming events are 1 day long
-#             'description': event.description,  # Optional: Add event description
-#             'location': event.venue,  # Optional: Add venue (location of the event)
-#             'url': event.link,  # Optional: URL if the event is online or has additional info
-#         }
+        # Prepare the event data
+        event_data = {
+            'title': event.name,  # Event name
+            'date': event.date.isoformat(),  # Event date in ISO format, assuming a single-day event
+            'location': event.venue,  # Optional: Add venue (location of the event)
+        }
 
-#         event_list.append(event_data)
+        event_list.append(event_data)
 
-#     return Response(event_list)
+    return Response(event_list)

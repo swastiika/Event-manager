@@ -15,28 +15,50 @@ document.addEventListener("DOMContentLoaded", () => {
     const homeButton = document.querySelector("#home");
     const invitations = document.querySelector('#invitations');
     const calendarEl = document.querySelector('#calendar');
+
     if (calendarEl) {
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth', // Default view is month
             locale: 'en', // Set locale (optional)
-            
+    
             // Fetch the events from your API endpoint
-            events: []//function(info, successCallback, failureCallback) {
-            //     fetch('/accepted_events')  // Adjust the URL to your API
-            //         .then(response => response.json())
-            //         .then(data => {
-            //             successCallback(data);  // Pass the event data to FullCalendar
-            //         })
-            //         .catch(error => {
-            //             failureCallback(error);  // Handle errors if needed
-            //         });
-            // }
+            events: function (info, successCallback, failureCallback) {
+                fetch('/accepted_events') // Adjust the URL to your API
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Map your API response to FullCalendar's format
+                        const events = data.map(event => ({
+                            title: event.title,
+                            start: event.date, // Map 'date' to 'start'
+                            extendedProps: {
+                                location: event.location // Add custom property
+                            }
+                        }));
+                        successCallback(events); // Pass the adapted events to FullCalendar
+                    })
+                    .catch(error => {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error); // Handle errors if needed
+                    });
+            },
+    
+            // Event click handler to display location or custom info
+            eventClick: function(info) {
+                alert(`Event: ${info.event.title}\nLocation: ${info.event.extendedProps.location}`);
+            }
         });
     
         calendar.render(); // Render the calendar
     }
     
-    // Event Listeners
+    
+    
+    
     if (publicEvent) {
         publicEvent.addEventListener("click", ()=>{
             showEvent();
@@ -53,6 +75,107 @@ document.addEventListener("DOMContentLoaded", () => {
         invitations.addEventListener("click",function(){
             showInvitations();
         })
+    }
+    if (calendarEl) {
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth', // Default view is month
+            locale: 'en', // Set locale (optional)
+    
+            events: function (info, successCallback, failureCallback) {
+                fetch('/accepted_events') // Adjust the URL to your API
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Map your API response to FullCalendar's format
+                        const events = data.map(event => ({
+                            title: event.title,
+                            start: event.date, // Map 'date' to 'start'
+                            extendedProps: {
+                                location: event.location // Add custom property
+                            }
+                        }));
+                        successCallback(events); // Pass the adapted events to FullCalendar
+                    })
+                    .catch(error => {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error); // Handle errors if needed
+                    });
+            },
+    
+            // Event click handler to display a pop-up
+            eventClick: function(info) {
+                const popup = document.getElementById("event-popup");
+    
+                // Populate the popup with event details
+                popup.innerHTML = `
+                    <strong>${info.event.title}</strong><br>
+                    Location: ${info.event.extendedProps.location || 'N/A'}<br>
+                    Date: ${info.event.start.toLocaleDateString()}
+                `;
+    
+                // Get the event's coordinates
+                const rect = info.el.getBoundingClientRect();
+                popup.style.top = `${rect.top + window.scrollY - 10}px`;
+                popup.style.left = `${rect.left + window.scrollX + 50}px`;
+    
+                // Show the popup
+                popup.style.display = "block";
+    
+                // Hide the popup when clicking outside
+                document.addEventListener("click", function hidePopup(event) {
+                    if (!popup.contains(event.target) && event.target !== info.el) {
+                        popup.style.display = "none";
+                        document.removeEventListener("click", hidePopup);
+                    }
+                });
+            }
+        });
+    
+        calendar.render(); // Render the calendar
+    }
+    
+    
+    // Home button redirect
+    if (homeButton) {
+        homeButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const homePageURL = "http://127.0.0.1:8000/"; // Replace with your actual home URL
+            window.location.href = homePageURL;
+        });
+    }
+
+    // Toggle create event form visibility
+    if (createEventBtn) {
+        createEventBtn.addEventListener("click", () => {
+            const isFormHidden = createEventForm.style.display === "none" || createEventForm.style.display === "";
+            calendarEl.style.display = isFormHidden ? "none" : ""; 
+            createEventForm.style.display = isFormHidden ? "block" : "none";
+            createEventBtn.innerText = isFormHidden ? "Cancel" : "Create New Event";
+            createEventBtn.classList.toggle("btn-primary", !isFormHidden);
+            createEventBtn.classList.toggle("btn-danger", isFormHidden);
+        });
+
+        // Toggle venue/link fields based on event mode
+        if (eventMode) {
+            eventMode.addEventListener("change", () => {
+                const isOffline = eventMode.value === "offline";
+                const isOnline = eventMode.value === "online";
+
+                venueField.style.display = isOffline ? "block" : "none";
+                linkField.style.display = isOnline ? "block" : "none";
+            });
+        }
+
+        // Handle event form submission
+        if (eventForm) {
+            eventForm.addEventListener("submit", function (event) {
+                create_event(event, eventForm); // Call the create_event function
+            });
+        }
     }
     if (invitationForm) {
         invitationForm.addEventListener("submit", function (e) {
@@ -94,43 +217,5 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error("Error sending invitations:", error);
                 });
         });
-    }
-    
-    // Home button redirect
-    if (homeButton) {
-        homeButton.addEventListener("click", function (event) {
-            event.preventDefault();
-            const homePageURL = "http://127.0.0.1:8000/"; // Replace with your actual home URL
-            window.location.href = homePageURL;
-        });
-    }
-
-    // Toggle create event form visibility
-    if (createEventBtn) {
-        createEventBtn.addEventListener("click", () => {
-            const isFormHidden = createEventForm.style.display === "none" || createEventForm.style.display === "";
-            createEventForm.style.display = isFormHidden ? "block" : "none";
-            createEventBtn.innerText = isFormHidden ? "Cancel" : "Create New Event";
-            createEventBtn.classList.toggle("btn-primary", !isFormHidden);
-            createEventBtn.classList.toggle("btn-danger", isFormHidden);
-        });
-
-        // Toggle venue/link fields based on event mode
-        if (eventMode) {
-            eventMode.addEventListener("change", () => {
-                const isOffline = eventMode.value === "offline";
-                const isOnline = eventMode.value === "online";
-
-                venueField.style.display = isOffline ? "block" : "none";
-                linkField.style.display = isOnline ? "block" : "none";
-            });
-        }
-
-        // Handle event form submission
-        if (eventForm) {
-            eventForm.addEventListener("submit", function (event) {
-                create_event(event, eventForm); // Call the create_event function
-            });
-        }
     }
 });
